@@ -1,7 +1,8 @@
 /* DASH MOBILE SERVICES — individual service booking tabs: cleaning, lawn/property, and residential snow removal. */
 (function(){'use strict';
 const GARAGE='garage-cleaning',JUNK='trash-junk-removal';
-const SNOW={walkway:'Walkway Snow Removal',driveway:'Driveway Snow Removal','around-house':'Around-the-House Snow Removal'};\nconst names={[GARAGE]:'Garage Cleaning',[JUNK]:'Trash & Junk Removal',...SNOW};
+const SNOW={walkway:'Walkway Snow Removal',driveway:'Driveway Snow Removal','around-house':'Around-the-House Snow Removal'};
+const names={[GARAGE]:'Garage Cleaning',[JUNK]:'Trash & Junk Removal',...SNOW};
 const garageRates={single:125,double:195,large:275},junkRates={small:95,quarter:145,half:225,threequarter:325,full:425};
 const lawnServices=[['lawn-mowing','Lawn Mowing','Routine mowing to keep your grass neat, manageable, and well maintained.'],['weed-removal','Weed Removal','Removal of weeds from suitable lawn and landscape areas.'],['mulch-installation','Mulch Installation','Installation and spreading of mulch in existing landscape beds.'],['decorative-rock','Decorative Rock Installation','Installation and spreading of decorative landscape rock.'],['yard-cleanup','Yard Cleanup','General cleanup of leaves, debris, and manageable yard waste.'],['trimming-edging','Trimming & Edging','Basic trimming and edging around accessible lawn areas.'],['seasonal-yard-cleanup','Seasonal Yard Cleanup','Larger seasonal cleanup of suitable lawn and property areas.'],['property-maintenance','Property Maintenance','Routine lawn and property-care service for suitable areas.']];
 const lawnNames=Object.fromEntries(lawnServices.map(x=>[x[0],x[1]]));
