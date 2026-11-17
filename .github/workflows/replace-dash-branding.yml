@@ -37,25 +37,27 @@ jobs:
           except UnicodeDecodeError:
               raise SystemExit(0)
 
-          # Customer-facing brand only. Keep PROMT Works, email addresses,
-          # URLs, JS identifiers, and other technical names unchanged.
-          s = s.replace('DASH SERVICES', 'DASH MOBILE SERVICES')
-          s = s.replace('DASH Services', 'DASH MOBILE SERVICES')
-          s = s.replace('Dash Services', 'DASH MOBILE SERVICES')
-
-          # Make the legal relationship explicit where the site already
-          # identifies the public-facing brand.
-          s = s.replace(
-              'DASH MOBILE SERVICES is the public-facing brand of PROMTWORKS.',
-              'DASH MOBILE SERVICES is the DBA (doing business as) name of PROMT WORKS, LLC.'
+          import re
+          # Standardize every human-readable company/legal-name reference.
+          # Preserve technical URLs such as the existing GitHub Pages domain.
+          s = re.sub(
+              r'(?i)(?<![\\w./-])PROMT\\s*WORKS(?:\\s*,?\\s*LLC)?(?!\\.(?:github\\.io|com|net))',
+              'DASH MOBILE SERVICES LLC',
+              s
           )
-          s = s.replace(
-              'DASH MOBILE SERVICES is the public-facing brand of PROMT Works, LLC.',
-              'DASH MOBILE SERVICES is the DBA (doing business as) name of PROMT WORKS, LLC.'
+          s = re.sub(
+              r'(?i)DASH MOBILE SERVICES is the public-facing brand of DASH MOBILE SERVICES LLC\\.? ',
+              'DASH MOBILE SERVICES LLC. ',
+              s
+          )
+          s = re.sub(
+              r'(?i)DASH MOBILE SERVICES is the public-facing brand of DASH MOBILE SERVICES LLC\\.?',
+              'DASH MOBILE SERVICES LLC',
+              s
           )
           s = s.replace(
               '© 2026 DASH MOBILE SERVICES. All rights reserved.',
-              '© 2026 PROMT WORKS, LLC. DASH MOBILE SERVICES is the DBA. All rights reserved.'
+              '© 2026 DASH MOBILE SERVICES LLC. All rights reserved.'
           )
           p.write_text(s, encoding='utf-8')
           PY
