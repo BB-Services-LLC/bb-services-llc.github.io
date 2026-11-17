@@ -4,19 +4,18 @@ This file is the source record for the customer-facing policies published throug
 
 ## Payment, Pricing & Booking Policy
 
-DASH MOBILE SERVICES may maintain payment records for administrative, accounting, customer-service, and recordkeeping purposes. Customers paying through Cash App or Venmo must include “For [Customer Name]” and the applicable DASH booking number in the payment note or description when instructed by DASH.
+DASH MOBILE SERVICES may maintain payment records for administrative, accounting, customer-service, and recordkeeping purposes. Customers paying through Cash App or Venmo should include “For [Customer Name]” and the applicable DASH booking number in the payment note or description when instructed by DASH.
 
-Customers are responsible for providing required payment information accurately and completely. Missing or incorrect payment information may delay payment identification and may affect booking status, service dates, or scheduling availability.
+Customers are responsible for providing accurate payment information so DASH can identify and apply payments to the correct invoice.
 
-Sending a payment does not automatically confirm a booking. A booking is officially confirmed only after DASH verifies the required payment and completes its booking-confirmation process.
+A booking is officially confirmed when DASH has reviewed the request, confirmed the service details and availability, and sent the customer an official appointment confirmation. Payment is not required before DASH performs the service.
 
-If a customer believes a payment was submitted but DASH's records do not show it as received, DASH may request transaction information for review. A dispute does not automatically establish that payment was received.
+After the service has been completed, DASH will issue an invoice showing the amount due and the available payment methods and instructions. Customers are responsible for paying the invoice by its stated due date or according to the instructions provided.
 
-If a payment is declined, reversed, canceled, refunded by the payment provider, disputed, charged back, or otherwise not successfully retained by DASH, it will not be considered valid payment for the booking. The customer may remain responsible for the applicable amount and the booking may be placed on hold, canceled, or otherwise affected until resolved.
+If a customer believes a payment was submitted but DASH's records do not show it as received, DASH may request transaction information for review. A payment is marked received after DASH verifies that the funds were successfully received and retained.
 
-If required payment has not been received at least two (2) days before the scheduled service date or by the scheduled service date, the booking will be placed into Payment Pending status. Payment received after the original service date has passed will not preserve the original date, and the customer will be placed on the DASH Wait List for future scheduling. DASH cannot guarantee or estimate a replacement service date at that time.
+If a payment is declined, reversed, canceled, refunded by the payment provider, disputed, charged back, or otherwise not successfully retained by DASH, it will not be considered a completed payment. The customer remains responsible for any outstanding invoice balance, subject to applicable law.
 
-DASH does not guarantee that an original service date or appointment time will remain available after a payment deadline has passed. Customers may communicate scheduling preferences, but DASH determines the applicable service date.
 
 ## Service Quality, Complaints & Re-Service Policy
 
