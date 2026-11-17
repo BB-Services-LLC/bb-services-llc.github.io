@@ -53,7 +53,7 @@ $('msConfigs').innerHTML=html;$('msConfigs').querySelectorAll('select,input[type
 }
 function estimate(k,box){
 var v=function(opt){return box.querySelector('[data-opt="'+opt+'"]')?.value||''};
-if(k==='snow-removal')return nullif(k==='garage-cleaning')return garage[v('garage')]||null;
+if(k==='snow-removal')return null}if(k==='garage-cleaning')return garage[v('garage')]||null;
 if(k==='trash-junk-removal')return junk[v('junk')]||null;
 if(k==='house-cleaning'){var n=v('house');if(!house[n])return null;var addons={refrigerator:35,oven:35,baseboards:40,movein:50,moveout:50,apartment:25,kitchen:50,bathroom:35,livingroom:35,postparty:75,turnover:75};var add=0;box.querySelectorAll('[data-addon]:checked').forEach(function(el){add+=addons[el.dataset.addon]||0;if(el.dataset.addon==='bedroom')add+=Number(n)*25});return house[n]+(v('house-deep')==='yes'?houseDeep[n]:0)+add}
 if(prop[k]){var s=v('property');if(!s)return null;return prop[k][s][0]+(v('property-deep')==='yes'?prop[k][s][1]:0)}
