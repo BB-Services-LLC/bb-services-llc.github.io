@@ -226,9 +226,9 @@ Customers can request service timing. DASH assigns the final service date and se
 </div>
 
 <div class="card">
-<div class="label">AWAITING PAYMENT</div>
+<div class="label">OPEN INVOICES</div>
 <div class="value" id="pendingCount">0</div>
-<div class="muted">Open customer invoice balances</div>
+<div class="muted">Invoices awaiting full payment</div>
 </div>
 
 <div class="card">
@@ -866,8 +866,7 @@ This form does not contain demo data.
 
 <option>Booking Received</option>
 <option>Under Review</option>
-<option>Awaiting Payment</option>
-<option>Paid</option>
+<option>Approved</option>
 <option>Scheduled</option>
 <option>In Progress</option>
 <option>Completed</option>
@@ -880,13 +879,15 @@ This form does not contain demo data.
 
 <div class="field">
 
-<label>Payment status</label>
+<label>Invoice / payment status</label>
 
 <select id="paymentStatus">
 
-<option>Not Recorded</option>
-<option>Pending</option>
-<option>Received</option>
+<option>Not Invoiced</option>
+<option>Invoice Issued</option>
+<option>Partially Paid</option>
+<option>Paid</option>
+<option>Payment Issue</option>
 <option>Refunded</option>
 
 </select>
@@ -1175,7 +1176,7 @@ document.getElementById('bookingCount')
 document.getElementById('pendingCount')
 .textContent=
 bookings.filter(
-b=>b.paymentStatus==='Pending'
+b=>['Invoice Issued','Partially Paid','Payment Issue'].includes(b.paymentStatus)
 ).length;
 
 document.getElementById('scheduledCount')
