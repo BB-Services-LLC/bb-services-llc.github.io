@@ -145,8 +145,9 @@ window.DASH_PRICING={COSTS: COSTS,LAWN:LAWN,AUTO:AUTO,estimate:estimate};
       if (!$("restrictionProof")?.files?.[0]) { alert("Please upload the required proof/authorization document."); $("restrictionProof")?.focus(); return false; }
     }
     if (!$("consent")?.checked) { alert("Please confirm the contact authorization before submitting."); $("consent")?.focus(); return false; }
+    const snowService=["walkway","driveway","around-house"].includes(service);
     const total=Number(String($("totalPrice")?.textContent||"").replace(/[^\d.]/g,""));
-    if (!Number.isFinite(total) || total <= 0) {
+    if (!snowService && (!Number.isFinite(total) || total <= 0)) {
       alert("Please calculate your estimate before submitting the service request.");
       return false;
     }
@@ -191,7 +192,7 @@ window.DASH_PRICING={COSTS: COSTS,LAWN:LAWN,AUTO:AUTO,estimate:estimate};
         vehicle_engine:value("engine"),
         vehicle_trim:value("trim"),
         service_details:selectedServiceDetails(),
-        estimated_total:Number(String($("totalPrice")?.textContent||"").replace(/[^\d.]/g,"")) || null
+        estimated_total:["walkway","driveway","around-house"].includes(value("service")) ? null : (Number(String($("totalPrice")?.textContent||"").replace(/[^\d.]/g,"")) || null)
       };
 
       const payload={request};
