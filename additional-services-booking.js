@@ -1,31 +1,644 @@
-/* BB SERVICES — individual service booking tabs: cleaning, lawn/property, and residential snow removal. */
-(function(){'use strict';
-const GARAGE='garage-cleaning',JUNK='trash-junk-removal';
-const SNOW={walkway:'Walkway Snow Removal',driveway:'Driveway Snow Removal','around-house':'Around-the-House Snow Removal'};
-const names={[GARAGE]:'Garage Cleaning',[JUNK]:'Trash & Junk Removal',...SNOW};
-const garageRates={single:125,double:195,large:275},junkRates={small:95,quarter:145,half:225,threequarter:325,full:425};
-const lawnServices=[['lawn-mowing','Lawn Mowing','Routine mowing to keep your grass neat, manageable, and well maintained.'],['weed-removal','Weed Removal','Removal of weeds from suitable lawn and landscape areas.'],['mulch-installation','Mulch Installation','Installation and spreading of mulch in existing landscape beds.'],['decorative-rock','Decorative Rock Installation','Installation and spreading of decorative landscape rock.'],['yard-cleanup','Yard Cleanup','General cleanup of leaves, debris, and manageable yard waste.'],['trimming-edging','Trimming & Edging','Basic trimming and edging around accessible lawn areas.'],['seasonal-yard-cleanup','Seasonal Yard Cleanup','Larger seasonal cleanup of suitable lawn and property areas.'],['property-maintenance','Property Maintenance','Routine lawn and property-care service for suitable areas.']];
-const lawnNames=Object.fromEntries(lawnServices.map(x=>[x[0],x[1]]));
-const $=id=>document.getElementById(id),v=id=>String($(id)?.value||'').trim();
-function addOption(){const s=$('service');if(!s)return;[[GARAGE,'Garage Cleaning'],[JUNK,'Trash & Junk Removal'],...lawnServices.map(x=>[x[0],x[1]]),...Object.entries(SNOW)].forEach(([x,t])=>{if(![...s.options].some(o=>o.value===x))s.add(new Option(t,x))})}
-function addCategory(){if(!$('automotive')||$('additional-booking-services'))return;const a=$('automotive');const sec=document.createElement('section');sec.className='category';sec.id='additional-booking-services';sec.innerHTML='<div class="category-head"><h2>Cleaning &amp; Removal Services</h2><p>Mobile cleaning and removal services available for online booking.</p></div><div class="services"><div class="service"><strong>Garage Cleaning</strong><span>Garage cleaning and cleanout with fixed starting estimates based on garage size.</span><button type="button" data-add="garage-cleaning">Book Online</button></div><div class="service"><strong>Trash &amp; Junk Removal</strong><span>Mobile trash and junk removal with fixed starting estimates based on estimated load size.</span><button type="button" data-add="trash-junk-removal">Book Online</button></div></div>';a.insertAdjacentElement('afterend',sec);sec.querySelector('.category-head').addEventListener('click',()=>sec.classList.toggle('open'));sec.querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()=>openAdd(b.dataset.add)))}
-function addLawnCategory(){if(!$('automotive')||$('lawn-property-booking-services'))return;const a=$('additional-booking-services')||$('automotive');const sec=document.createElement('section');sec.className='category';sec.id='lawn-property-booking-services';sec.innerHTML='<div class="category-head"><h2>Lawn &amp; Property Care</h2><p>Mobile lawn and property care services available for online booking.</p></div><div class="services">'+lawnServices.map(x=>'<div class="service"><strong>'+x[1]+'</strong><span>'+x[2]+'</span><button type="button" data-lawn="'+x[0]+'">Book Online</button></div>').join('')+'</div>';a.insertAdjacentElement('afterend',sec);sec.querySelector('.category-head').addEventListener('click',()=>sec.classList.toggle('open'));sec.querySelectorAll('[data-lawn]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();openLawn(b.dataset.lawn)},true))}function addSnowCategory(){if(!$('automotive')||$('snow-removal-booking-services'))return;const a=$('lawn-property-booking-services')||$('additional-booking-services')||$('automotive');const sec=document.createElement('section');sec.className='category';sec.id='snow-removal-booking-services';sec.innerHTML='<div class="category-head"><h2>Residential Snow Removal</h2><p>Choose the residential snow removal areas you need. Pricing is being finalized and will be quoted based on snowfall accumulation for each event, the selected areas, and property conditions.</p></div><div class="services"><div class="service"><strong>Walkway Clearing</strong><span>Residential walkway snow clearing.</span><button type="button" data-snow="walkway">Book Online</button></div><div class="service"><strong>Driveway Clearing</strong><span>Residential driveway snow clearing.</span><button type="button" data-snow="driveway">Book Online</button></div><div class="service"><strong>Around-the-House Clearing</strong><span>Residential snow clearing around the house.</span><button type="button" data-snow="around-house">Book Online</button></div></div>';a.insertAdjacentElement('afterend',sec);sec.querySelector('.category-head').addEventListener('click',()=>sec.classList.toggle('open'));sec.querySelectorAll('[data-snow]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();openSnow(b.dataset.snow)},true))}
-function fields(){const g=document.querySelector('#booking .grid'),date=$('date')?.parentElement;if(!g||!date)return;[['garageSizeField','Garage Size','<option value="">Select garage size</option><option value="single">1-car garage — $125</option><option value="double">2-car garage — $195</option><option value="large">3+ car / large garage — $275</option>','garageSize'],['junkLoadField','Estimated Junk Load Size','<option value="">Select estimated load</option><option value="small">Small load / up to 1/4 truck — $95</option><option value="quarter">1/4 truck — $145</option><option value="half">1/2 truck — $225</option><option value="threequarter">3/4 truck — $325</option><option value="full">Full truck — $425</option>','junkLoad']].forEach(([id,label,opts,sel])=>{if($(id))return;const d=document.createElement('div');d.className='field full hidden additional-field';d.id=id;d.innerHTML='<label for="'+sel+'">'+label+' <span class="required">*</span></label><select id="'+sel+'">'+opts+'</select>';g.insertBefore(d,date)});if(!$('additionalAccessField')){const d=document.createElement('div');d.className='field full hidden additional-field';d.id='additionalAccessField';d.innerHTML='<label for="additionalDetails">Access &amp; Item Details</label><textarea id="additionalDetails" rows="4" placeholder="Tell BB about stairs, gates, narrow access, heavy items, appliances, furniture, bags, construction debris, or anything else we should know."></textarea>';g.insertBefore(d,date)}if(!$('junkRequirementField')){const d=document.createElement('div');d.className='field full hidden additional-field';d.id='junkRequirementField';d.innerHTML='<div class="note"><strong>Trash &amp; Junk Removal — Customer Requirement</strong><p>If an item is still usable, such as a working TV, appliance, furniture, electronics, tools, or other household/property item, please do not intentionally damage, destroy, or disassemble it before BB SERVICES arrives. If it has a remote, power cord, charger, stand, cables, keys, manuals, or other associated accessories, please keep them with the item whenever possible.</p><p>BB SERVICES may use eligible usable items for company purposes, resell them, or donate them to people in need.</p><label class="contact-check"><input type="checkbox" id="junkConditionAgreement"><span>I understand and agree not to intentionally damage usable items or their associated accessories before pickup. <span class="required">*</span></span></label></div>';g.insertBefore(d,date)}}
-function snowSaltField(){const g=document.querySelector('#booking .grid'),date=$('date')?.parentElement;if(!g||!date||$('snowSaltField'))return;const d=document.createElement('div');d.className='field full hidden additional-field';d.id='snowSaltField';d.innerHTML='<label class="contact-check"><input type="checkbox" id="snowSalt"> Include snow salt application in my quote request</label>';g.insertBefore(d,date)}function lawnSizeField(){const g=document.querySelector('#booking .grid'),date=$('date')?.parentElement;if(!g||!date)return;if(!$('lawnSizeField')){const d=document.createElement('div');d.className='field full hidden additional-field';d.id='lawnSizeField';d.innerHTML='<label for="lawnSize">Approximate Lawn Size <span class="required">*</span></label><select id="lawnSize" required><option value="medium">Medium — up to 10,000 sq. ft. (standard)</option><option value="small">Small — up to 5,000 sq. ft.</option><option value="large">Large — 10,001–20,000 sq. ft.</option><option value="xlarge">Extra Large — 20,001–30,000 sq. ft.</option></select><p class="estimate-note">Properties larger than 30,000 sq. ft. require a custom estimate.</p>';g.insertBefore(d,date)}}
-function mode(){fields();snowSaltField();lawnSizeField();const s=v('service'),on=!!names[s];document.querySelectorAll('.additional-field').forEach(e=>e.classList.toggle('hidden',!on));['year','make','model','engine','trim'].forEach(id=>$(id)?.parentElement?.classList.toggle('hidden',on||!!lawnNames[s]));$('garageSizeField')?.classList.toggle('hidden',s!==GARAGE);$('junkLoadField')?.classList.toggle('hidden',s!==JUNK);$('junkRequirementField')?.classList.toggle('hidden',s!==JUNK);$('additionalAccessField')?.classList.toggle('hidden',!(s===GARAGE||s===JUNK));$('lawnSizeField')?.classList.toggle('hidden',s!=='lawn-mowing');$('snowSaltField')?.classList.toggle('hidden',!SNOW[s]);if(on){if($('title'))$('title').textContent=names[s];if($('description'))$('description').textContent='Complete the information below for your '+names[s].toLowerCase()+' request.'}}
-function openAdd(k){addOption();addCategory();fields();$('service').value=k;$('automotive')?.classList.remove('open');$('additional-booking-services')?.classList.add('open');$('lawn-property-booking-services')?.classList.remove('open');$('booking')?.classList.add('open');mode();$('booking')?.scrollIntoView({behavior:'smooth'})}
-function openLawn(k){addOption();addLawnCategory();fields();lawnSizeField();$('service').value=k;$('automotive')?.classList.remove('open');$('additional-booking-services')?.classList.remove('open');$('lawn-property-booking-services')?.classList.add('open');$('booking')?.classList.add('open');['year','make','model','engine','trim'].forEach(id=>$(id)?.parentElement?.classList.add('hidden'));['estimate','review','contact'].forEach(id=>$(id)?.classList.remove('open'));if($('title'))$('title').textContent=(lawnNames[k]||'Lawn & Property Care')+' Booking';if($('description'))$('description').textContent='Complete the information below for your '+(lawnNames[k]||'lawn & property care').toLowerCase()+' request.';$('lawnSizeField')?.classList.toggle('hidden',k!=='lawn-mowing');if(typeof window.setStep==='function')window.setStep(2);$('booking')?.scrollIntoView({behavior:'smooth'})}
-function openSnow(k){addOption();addSnowCategory();snowSaltField();$('service').value=k;$('automotive')?.classList.remove('open');$('additional-booking-services')?.classList.remove('open');$('lawn-property-booking-services')?.classList.remove('open');$('snow-removal-booking-services')?.classList.add('open');$('booking')?.classList.add('open');['year','make','model','engine','trim'].forEach(id=>$(id)?.parentElement?.classList.add('hidden'));document.querySelectorAll('.additional-field').forEach(e=>e.classList.add('hidden'));$('snowSaltField')?.classList.remove('hidden');$('estimate')?.classList.remove('open');$('review')?.classList.remove('open');$('contact')?.classList.remove('open');if($('title'))$('title').textContent=SNOW[k]+' Booking';if($('description'))$('description').textContent='Snow removal pricing is being finalized. BB will provide a quote based on snowfall accumulation for each event, the selected service area, and property conditions.';if(typeof window.setStep==='function')window.setStep(2);$('booking')?.scrollIntoView({behavior:'smooth'})}function total(){const s=v('service');if(s===GARAGE)return garageRates[v('garageSize')]||0;if(s===JUNK)return junkRates[v('junkLoad')]||0;if(SNOW[s])return null;return 0}
-function validAdd(){if(SNOW[v('service')])return true;if(v('service')===GARAGE&&!garageRates[v('garageSize')]){alert('Please select a garage size.');return false}if(v('service')===JUNK){if(!junkRates[v('junkLoad')]){alert('Please select an estimated junk load size.');return false}if(!$('junkConditionAgreement')?.checked){alert('Please acknowledge the Trash & Junk Removal customer requirement before continuing.');return false}}return true}
-function showAdditionalEstimate(){mode();if(!validAdd())return;const isSnow=!!SNOW[v('service')],t=total();if($('laborPrice'))$('laborPrice').textContent=isSnow?'Quote required':'
-function interceptEstimateClick(){document.addEventListener('click',function(e){const b=e.target.closest('#booking button.continue');if(!b||b.closest('#estimate')||(!names[v('service')]&&!lawnNames[v('service')]))return;const text=(b.textContent||'').trim().toLowerCase();if(text!=='get estimate')return;if(lawnNames[v('service')])return;e.preventDefault();e.stopImmediatePropagation();showAdditionalEstimate()},true)}
-function init(){addOption();addCategory();addLawnCategory();addSnowCategory();fields();snowSaltField();interceptEstimateClick();$('service')?.addEventListener('change',()=>{if(SNOW[v('service')])openSnow(v('service'));else if(lawnNames[v('service')])openLawn(v('service'));else mode()});setTimeout(()=>{addOption();addCategory();addLawnCategory();addSnowCategory();fields();snowSaltField()},300);setTimeout(()=>{addOption();addCategory();addLawnCategory();addSnowCategory();if(location.hash==='#snow-removal-booking-services')$('snow-removal-booking-services')?.scrollIntoView({behavior:'smooth',block:'start'})},1000)}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();})();
-+t.toFixed(2);if($('partsPrice'))$('partsPrice').textContent=isSnow?'To be determined':'$0.00';if($('totalPrice'))$('totalPrice').textContent=isSnow?'Quote required':'
-function interceptEstimateClick(){document.addEventListener('click',function(e){const b=e.target.closest('#booking button.continue');if(!b||b.closest('#estimate')||(!names[v('service')]&&!lawnNames[v('service')]))return;const text=(b.textContent||'').trim().toLowerCase();if(text!=='get estimate')return;if(lawnNames[v('service')])return;e.preventDefault();e.stopImmediatePropagation();showAdditionalEstimate()},true)}
-function init(){addOption();addCategory();addLawnCategory();addSnowCategory();fields();snowSaltField();interceptEstimateClick();$('service')?.addEventListener('change',()=>{if(SNOW[v('service')])openSnow(v('service'));else if(lawnNames[v('service')])openLawn(v('service'));else mode()});setTimeout(()=>{addOption();addCategory();addLawnCategory();addSnowCategory();fields();snowSaltField()},300);setTimeout(()=>{addOption();addCategory();addLawnCategory();addSnowCategory();if(location.hash==='#snow-removal-booking-services')$('snow-removal-booking-services')?.scrollIntoView({behavior:'smooth',block:'start'})},1000)}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();})();
-+t.toFixed(2);const note=document.querySelector('#estimate .estimate-note');if(note&&isSnow)note.textContent='BB will provide a quote based on snowfall accumulation for each event, the selected service area, and property conditions. Pricing will be confirmed with you before scheduling.';$('estimate')?.classList.add('open');$('p3')?.classList.add('active');$('estimate')?.scrollIntoView({behavior:'smooth'})}
-function interceptEstimateClick(){document.addEventListener('click',function(e){const b=e.target.closest('#booking button.continue');if(!b||b.closest('#estimate')||(!names[v('service')]&&!lawnNames[v('service')]))return;const text=(b.textContent||'').trim().toLowerCase();if(text!=='get estimate')return;if(lawnNames[v('service')])return;e.preventDefault();e.stopImmediatePropagation();showAdditionalEstimate()},true)}
-function init(){addOption();addCategory();addLawnCategory();addSnowCategory();fields();snowSaltField();interceptEstimateClick();$('service')?.addEventListener('change',()=>{if(SNOW[v('service')])openSnow(v('service'));else if(lawnNames[v('service')])openLawn(v('service'));else mode()});setTimeout(()=>{addOption();addCategory();addLawnCategory();addSnowCategory();fields();snowSaltField()},300);setTimeout(()=>{addOption();addCategory();addLawnCategory();addSnowCategory();if(location.hash==='#snow-removal-booking-services')$('snow-removal-booking-services')?.scrollIntoView({behavior:'smooth',block:'start'})},1000)}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();})();
+
+/* BB SERVICES — Cleaning, Lawn & Property Care, and Snow Removal Booking */
+(function () {
+'use strict';
+
+const GARAGE = 'garage-cleaning';
+const JUNK = 'trash-junk-removal';
+
+const SNOW = {
+  walkway: 'Walkway Snow Removal',
+  driveway: 'Driveway Snow Removal',
+  'around-house': 'Around-the-House Snow Removal'
+};
+
+const names = {
+  [GARAGE]: 'Garage Cleaning',
+  [JUNK]: 'Trash & Junk Removal',
+  ...SNOW
+};
+
+const garageRates = {
+  single: 125,
+  double: 195,
+  large: 275
+};
+
+const junkRates = {
+  small: 95,
+  quarter: 145,
+  half: 225,
+  threequarter: 325,
+  full: 425
+};
+
+const lawnServices = [
+  ['lawn-mowing', 'Lawn Mowing',
+    'Routine mowing to keep your grass neat, manageable, and well maintained.'],
+  ['weed-removal', 'Weed Removal',
+    'Removal of weeds from suitable lawn and landscape areas.'],
+  ['mulch-installation', 'Mulch Installation',
+    'Installation and spreading of mulch in existing landscape beds.'],
+  ['decorative-rock', 'Decorative Rock Installation',
+    'Installation and spreading of decorative landscape rock.'],
+  ['yard-cleanup', 'Yard Cleanup',
+    'General cleanup of leaves, debris, and manageable yard waste.'],
+  ['trimming-edging', 'Trimming & Edging',
+    'Basic trimming and edging around accessible lawn areas.'],
+  ['seasonal-yard-cleanup', 'Seasonal Yard Cleanup',
+    'Larger seasonal cleanup of suitable lawn and property areas.'],
+  ['property-maintenance', 'Property Maintenance',
+    'Routine lawn and property-care service for suitable areas.']
+];
+
+const lawnNames = Object.fromEntries(
+  lawnServices.map(service => [service[0], service[1]])
+);
+
+const $ = id => document.getElementById(id);
+const v = id => String($(id)?.value || '').trim();
+
+function addOption() {
+  const select = $('service');
+  if (!select) return;
+
+  [
+    [GARAGE, 'Garage Cleaning'],
+    [JUNK, 'Trash & Junk Removal'],
+    ...lawnServices.map(x => [x[0], x[1]]),
+    ...Object.entries(SNOW)
+  ].forEach(([value, label]) => {
+    if (![...select.options].some(o => o.value === value)) {
+      select.add(new Option(label, value));
+    }
+  });
+}
+
+function addCategory() {
+  if (!$('automotive') || $('additional-booking-services')) return;
+
+  const section = document.createElement('section');
+  section.className = 'category';
+  section.id = 'additional-booking-services';
+
+  section.innerHTML = `
+    <div class="category-head">
+      <h2>Cleaning &amp; Removal Services</h2>
+      <p>Mobile cleaning and removal services available for online booking.</p>
+    </div>
+    <div class="services">
+      <div class="service">
+        <strong>Garage Cleaning</strong>
+        <span>Garage cleaning and cleanout with estimates based on garage size.</span>
+        <button type="button" data-add="garage-cleaning">Book Online</button>
+      </div>
+      <div class="service">
+        <strong>Trash &amp; Junk Removal</strong>
+        <span>Mobile trash and junk removal with estimates based on load size.</span>
+        <button type="button" data-add="trash-junk-removal">Book Online</button>
+      </div>
+    </div>
+  `;
+
+  $('automotive').insertAdjacentElement('afterend', section);
+
+  section.querySelector('.category-head')
+    .addEventListener('click', () => section.classList.toggle('open'));
+
+  section.querySelectorAll('[data-add]').forEach(button => {
+    button.addEventListener('click', () => openAdd(button.dataset.add));
+  });
+}
+
+function addLawnCategory() {
+  if (!$('automotive') || $('lawn-property-booking-services')) return;
+
+  const anchor = $('additional-booking-services') || $('automotive');
+  const section = document.createElement('section');
+
+  section.className = 'category';
+  section.id = 'lawn-property-booking-services';
+
+  section.innerHTML = `
+    <div class="category-head">
+      <h2>Lawn &amp; Property Care</h2>
+      <p>Mobile lawn and property care services available for online booking.</p>
+    </div>
+    <div class="services">
+      ${lawnServices.map(service => `
+        <div class="service">
+          <strong>${service[1]}</strong>
+          <span>${service[2]}</span>
+          <button type="button" data-lawn="${service[0]}">Book Online</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  anchor.insertAdjacentElement('afterend', section);
+
+  section.querySelector('.category-head')
+    .addEventListener('click', () => section.classList.toggle('open'));
+
+  section.querySelectorAll('[data-lawn]').forEach(button => {
+    button.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      openLawn(button.dataset.lawn);
+    }, true);
+  });
+}
+
+function addSnowCategory() {
+  if (!$('automotive') || $('snow-removal-booking-services')) return;
+
+  const anchor =
+    $('lawn-property-booking-services') ||
+    $('additional-booking-services') ||
+    $('automotive');
+
+  const section = document.createElement('section');
+  section.className = 'category';
+  section.id = 'snow-removal-booking-services';
+
+  section.innerHTML = `
+    <div class="category-head">
+      <h2>Residential Snow Removal</h2>
+      <p>Choose the residential snow removal areas you need.
+      Pricing will be quoted based on snowfall accumulation,
+      selected areas, and property conditions.</p>
+    </div>
+    <div class="services">
+      <div class="service">
+        <strong>Walkway Clearing</strong>
+        <span>Residential walkway snow clearing.</span>
+        <button type="button" data-snow="walkway">Book Online</button>
+      </div>
+      <div class="service">
+        <strong>Driveway Clearing</strong>
+        <span>Residential driveway snow clearing.</span>
+        <button type="button" data-snow="driveway">Book Online</button>
+      </div>
+      <div class="service">
+        <strong>Around-the-House Clearing</strong>
+        <span>Residential snow clearing around the house.</span>
+        <button type="button" data-snow="around-house">Book Online</button>
+      </div>
+    </div>
+  `;
+
+  anchor.insertAdjacentElement('afterend', section);
+
+  section.querySelector('.category-head')
+    .addEventListener('click', () => section.classList.toggle('open'));
+
+  section.querySelectorAll('[data-snow]').forEach(button => {
+    button.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      openSnow(button.dataset.snow);
+    }, true);
+  });
+}
+
+function fields() {
+  const grid = document.querySelector('#booking .grid');
+  const date = $('date')?.parentElement;
+
+  if (!grid || !date) return;
+
+  const fieldDefinitions = [
+    [
+      'garageSizeField',
+      'Garage Size',
+      `<option value="">Select garage size</option>
+       <option value="single">1-car garage — $125</option>
+       <option value="double">2-car garage — $195</option>
+       <option value="large">3+ car / large garage — $275</option>`,
+      'garageSize'
+    ],
+    [
+      'junkLoadField',
+      'Estimated Junk Load Size',
+      `<option value="">Select estimated load</option>
+       <option value="small">Small load / up to 1/4 truck — $95</option>
+       <option value="quarter">1/4 truck — $145</option>
+       <option value="half">1/2 truck — $225</option>
+       <option value="threequarter">3/4 truck — $325</option>
+       <option value="full">Full truck — $425</option>`,
+      'junkLoad'
+    ]
+  ];
+
+  fieldDefinitions.forEach(([id, label, options, selectId]) => {
+    if ($(id)) return;
+
+    const div = document.createElement('div');
+    div.className = 'field full hidden additional-field';
+    div.id = id;
+
+    div.innerHTML = `
+      <label for="${selectId}">
+        ${label} <span class="required">*</span>
+      </label>
+      <select id="${selectId}">${options}</select>
+    `;
+
+    grid.insertBefore(div, date);
+  });
+
+  if (!$('additionalAccessField')) {
+    const div = document.createElement('div');
+    div.className = 'field full hidden additional-field';
+    div.id = 'additionalAccessField';
+
+    div.innerHTML = `
+      <label for="additionalDetails">Access &amp; Item Details</label>
+      <textarea id="additionalDetails" rows="4"
+        placeholder="Tell BB about stairs, gates, narrow access, heavy items, appliances, furniture, or anything else we should know."></textarea>
+    `;
+
+    grid.insertBefore(div, date);
+  }
+
+  if (!$('junkRequirementField')) {
+    const div = document.createElement('div');
+    div.className = 'field full hidden additional-field';
+    div.id = 'junkRequirementField';
+
+    div.innerHTML = `
+      <div class="note">
+        <strong>Trash &amp; Junk Removal — Customer Requirement</strong>
+        <p>If an item is still usable, please do not intentionally damage,
+        destroy, or disassemble it before BB SERVICES arrives. Keep associated
+        accessories whenever possible.</p>
+        <p>BB SERVICES may use eligible usable items for company purposes,
+        resell them, or donate them to people in need.</p>
+        <label class="contact-check">
+          <input type="checkbox" id="junkConditionAgreement">
+          <span>I understand and agree not to intentionally damage usable
+          items or their associated accessories before pickup.
+          <span class="required">*</span></span>
+        </label>
+      </div>
+    `;
+
+    grid.insertBefore(div, date);
+  }
+}
+
+function snowSaltField() {
+  const grid = document.querySelector('#booking .grid');
+  const date = $('date')?.parentElement;
+
+  if (!grid || !date || $('snowSaltField')) return;
+
+  const div = document.createElement('div');
+  div.className = 'field full hidden additional-field';
+  div.id = 'snowSaltField';
+
+  div.innerHTML = `
+    <label class="contact-check">
+      <input type="checkbox" id="snowSalt">
+      Include snow salt application in my quote request
+    </label>
+  `;
+
+  grid.insertBefore(div, date);
+}
+
+function lawnSizeField() {
+  const grid = document.querySelector('#booking .grid');
+  const date = $('date')?.parentElement;
+
+  if (!grid || !date || $('lawnSizeField')) return;
+
+  const div = document.createElement('div');
+  div.className = 'field full hidden additional-field';
+  div.id = 'lawnSizeField';
+
+  div.innerHTML = `
+    <label for="lawnSize">
+      Approximate Lawn Size <span class="required">*</span>
+    </label>
+    <select id="lawnSize" required>
+      <option value="medium">Medium — up to 10,000 sq. ft. (standard)</option>
+      <option value="small">Small — up to 5,000 sq. ft.</option>
+      <option value="large">Large — 10,001–20,000 sq. ft.</option>
+      <option value="xlarge">Extra Large — 20,001–30,000 sq. ft.</option>
+    </select>
+    <p class="estimate-note">
+      Properties larger than 30,000 sq. ft. require a custom estimate.
+    </p>
+  `;
+
+  grid.insertBefore(div, date);
+}
+
+function mode() {
+  fields();
+  snowSaltField();
+  lawnSizeField();
+
+  const service = v('service');
+  const isAdditional = !!names[service];
+  const isLawn = !!lawnNames[service];
+
+  document.querySelectorAll('.additional-field').forEach(field => {
+    field.classList.toggle('hidden', !isAdditional);
+  });
+
+  ['year', 'make', 'model', 'engine', 'trim'].forEach(id => {
+    $(id)?.parentElement?.classList.toggle(
+      'hidden',
+      isAdditional || isLawn
+    );
+  });
+
+  $('garageSizeField')?.classList.toggle('hidden', service !== GARAGE);
+  $('junkLoadField')?.classList.toggle('hidden', service !== JUNK);
+  $('junkRequirementField')?.classList.toggle('hidden', service !== JUNK);
+
+  $('additionalAccessField')?.classList.toggle(
+    'hidden',
+    service !== GARAGE && service !== JUNK
+  );
+
+  $('lawnSizeField')?.classList.toggle('hidden', service !== 'lawn-mowing');
+  $('snowSaltField')?.classList.toggle('hidden', !SNOW[service]);
+
+  if (isAdditional) {
+    if ($('title')) $('title').textContent = names[service];
+    if ($('description')) {
+      $('description').textContent =
+        'Complete the information below for your ' +
+        names[service].toLowerCase() + ' request.';
+    }
+  }
+}
+
+function openAdd(service) {
+  addOption();
+  addCategory();
+  fields();
+
+  $('service').value = service;
+
+  $('automotive')?.classList.remove('open');
+  $('additional-booking-services')?.classList.add('open');
+  $('lawn-property-booking-services')?.classList.remove('open');
+
+  $('booking')?.classList.add('open');
+
+  mode();
+
+  $('booking')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+function openLawn(service) {
+  addOption();
+  addLawnCategory();
+  fields();
+  lawnSizeField();
+
+  $('service').value = service;
+
+  $('automotive')?.classList.remove('open');
+  $('additional-booking-services')?.classList.remove('open');
+  $('lawn-property-booking-services')?.classList.add('open');
+
+  $('booking')?.classList.add('open');
+
+  ['year', 'make', 'model', 'engine', 'trim'].forEach(id => {
+    $(id)?.parentElement?.classList.add('hidden');
+  });
+
+  ['estimate', 'review', 'contact'].forEach(id => {
+    $(id)?.classList.remove('open');
+  });
+
+  if ($('title')) {
+    $('title').textContent =
+      (lawnNames[service] || 'Lawn & Property Care') + ' Booking';
+  }
+
+  if ($('description')) {
+    $('description').textContent =
+      'Complete the information below for your ' +
+      (lawnNames[service] || 'lawn & property care').toLowerCase() +
+      ' request.';
+  }
+
+  $('lawnSizeField')?.classList.toggle('hidden', service !== 'lawn-mowing');
+
+  if (typeof window.setStep === 'function') {
+    window.setStep(2);
+  }
+
+  $('booking')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+function openSnow(service) {
+  addOption();
+  addSnowCategory();
+  snowSaltField();
+
+  $('service').value = service;
+
+  $('automotive')?.classList.remove('open');
+  $('additional-booking-services')?.classList.remove('open');
+  $('lawn-property-booking-services')?.classList.remove('open');
+  $('snow-removal-booking-services')?.classList.add('open');
+
+  $('booking')?.classList.add('open');
+
+  ['year', 'make', 'model', 'engine', 'trim'].forEach(id => {
+    $(id)?.parentElement?.classList.add('hidden');
+  });
+
+  document.querySelectorAll('.additional-field').forEach(field => {
+    field.classList.add('hidden');
+  });
+
+  $('snowSaltField')?.classList.remove('hidden');
+
+  ['estimate', 'review', 'contact'].forEach(id => {
+    $(id)?.classList.remove('open');
+  });
+
+  if ($('title')) {
+    $('title').textContent = SNOW[service] + ' Booking';
+  }
+
+  if ($('description')) {
+    $('description').textContent =
+      'Snow removal pricing will be quoted based on snowfall accumulation, ' +
+      'the selected service area, and property conditions.';
+  }
+
+  if (typeof window.setStep === 'function') {
+    window.setStep(2);
+  }
+
+  $('booking')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+function total() {
+  const service = v('service');
+
+  if (service === GARAGE) {
+    return garageRates[v('garageSize')] || 0;
+  }
+
+  if (service === JUNK) {
+    return junkRates[v('junkLoad')] || 0;
+  }
+
+  if (SNOW[service]) return null;
+
+  return 0;
+}
+
+function validAdd() {
+  if (SNOW[v('service')]) return true;
+
+  if (v('service') === GARAGE && !garageRates[v('garageSize')]) {
+    alert('Please select a garage size.');
+    return false;
+  }
+
+  if (v('service') === JUNK) {
+    if (!junkRates[v('junkLoad')]) {
+      alert('Please select an estimated junk load size.');
+      return false;
+    }
+
+    if (!$('junkConditionAgreement')?.checked) {
+      alert('Please acknowledge the Trash & Junk Removal customer requirement before continuing.');
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function showAdditionalEstimate() {
+  mode();
+
+  if (!validAdd()) return;
+
+  const isSnow = !!SNOW[v('service')];
+  const amount = total();
+
+  if ($('laborPrice')) {
+    $('laborPrice').textContent = isSnow
+      ? 'Quote required'
+      : '$' + amount.toFixed(2);
+  }
+
+  if ($('partsPrice')) {
+    $('partsPrice').textContent = isSnow
+      ? 'To be determined'
+      : '$0.00';
+  }
+
+  if ($('totalPrice')) {
+    $('totalPrice').textContent = isSnow
+      ? 'Quote required'
+      : '$' + amount.toFixed(2);
+  }
+
+  const note = document.querySelector('#estimate .estimate-note');
+
+  if (note && isSnow) {
+    note.textContent =
+      'BB will provide a quote based on snowfall accumulation, ' +
+      'the selected service area, and property conditions. ' +
+      'Pricing will be confirmed with you before scheduling.';
+  }
+
+  $('estimate')?.classList.add('open');
+  $('p3')?.classList.add('active');
+
+  $('estimate')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+function interceptEstimateClick() {
+  document.addEventListener('click', function (event) {
+    const button = event.target.closest('#booking button.continue');
+
+    if (!button || button.closest('#estimate')) return;
+
+    const service = v('service');
+
+    if (!names[service] && !lawnNames[service]) return;
+
+    const buttonText = (button.textContent || '').trim().toLowerCase();
+
+    if (buttonText !== 'get estimate') return;
+
+    // Lawn services use the existing lawn pricing engine.
+    if (lawnNames[service]) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    showAdditionalEstimate();
+  }, true);
+}
+
+function init() {
+  addOption();
+  addCategory();
+  addLawnCategory();
+  addSnowCategory();
+
+  fields();
+  snowSaltField();
+
+  interceptEstimateClick();
+
+  $('service')?.addEventListener('change', () => {
+    const service = v('service');
+
+    if (SNOW[service]) {
+      openSnow(service);
+    } else if (lawnNames[service]) {
+      openLawn(service);
+    } else {
+      mode();
+    }
+  });
+
+  setTimeout(() => {
+    addOption();
+    addCategory();
+    addLawnCategory();
+    addSnowCategory();
+    fields();
+    snowSaltField();
+  }, 300);
+
+  setTimeout(() => {
+    addOption();
+    addCategory();
+    addLawnCategory();
+    addSnowCategory();
+
+    if (location.hash === '#snow-removal-booking-services') {
+      $('snow-removal-booking-services')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }, 1000);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+})();
+ 
