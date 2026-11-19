@@ -50,7 +50,7 @@
     section.className = 'section';
     section.innerHTML = `
       <div class="title"><div><h1>Job Operations</h1><p>Owner-only job details, supply planning, and job profitability.</p></div></div>
-      <div class="notice"><b>Solo-owner workflow:</b> Enter or review a job once. DASH calculates the shopping list, service-location details, business-expense allocation, and estimated company profit. This section is added only to the Super Admin portal.</div>
+      <div class="notice"><b>Solo-owner workflow:</b> Enter or review a job once. BB calculates the shopping list, service-location details, business-expense allocation, and estimated company profit. This section is added only to the Super Admin portal.</div>
       <div class="jobops-grid">
         <div class="jobops-card">
           <h3>Job Details</h3>
