@@ -1,4 +1,4 @@
-/* DASH booking pricing engine — customer sees one combined service charge. */
+/* BB booking pricing engine — customer sees one combined service charge. */
 (function(){
 'use strict';
 if(window.__DASH_BOOKING_SUBMIT_LOADED)return;
@@ -109,7 +109,7 @@ window.DASH_PRICING={COSTS: COSTS,LAWN:LAWN,AUTO:AUTO,estimate:estimate};
       if (!value(id)) { alert(message); $(id)?.focus(); return false; }
     }
     if (value("locationState").toUpperCase() !== "MA") {
-      alert("DASH MOBILE SERVICES currently accepts service requests only in Massachusetts.");
+      alert("BB SERVICES currently accepts service requests only in Massachusetts.");
       $("locationState")?.focus(); return false;
     }
     const zip=value("locationZip").slice(0,5);
@@ -211,7 +211,7 @@ window.DASH_PRICING={COSTS: COSTS,LAWN:LAWN,AUTO:AUTO,estimate:estimate};
       if (!response.ok || !result.ok) throw new Error(result.error || result.message || "Your request could not be submitted. Please try again.");
       const contact=$("contact");
       if (contact) {
-        contact.innerHTML='<div class="note notice"><strong>Request received.</strong><p>Your service request has been submitted to DASH MOBILE SERVICES.</p><p><strong>Request number:</strong> '+String(result.request_number||"Pending").replace(/[&<>"]/g,"")+'</p><p>This is not an appointment confirmation. DASH will review your request and contact you about the next steps. If proof is required, your request will remain pending until it is reviewed.</p><p>Questions? Email supportdashservices@gmail.com or call (857) 220-7228.</p></div>';
+        contact.innerHTML='<div class="note notice"><strong>Request received.</strong><p>Your service request has been submitted to BB SERVICES.</p><p><strong>Request number:</strong> '+String(result.request_number||"Pending").replace(/[&<>"]/g,"")+'</p><p>This is not an appointment confirmation. BB will review your request and contact you about the next steps. If proof is required, your request will remain pending until it is reviewed.</p><p>Questions? Email supportdashservices@gmail.com or call (857) 220-7228.</p></div>';
         contact.scrollIntoView({behavior:"smooth",block:"start"});
       }
     } catch (error) {
