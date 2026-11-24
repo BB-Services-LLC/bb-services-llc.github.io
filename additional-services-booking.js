@@ -1,5 +1,5 @@
 
-/* BB SERVICES — Cleaning, Lawn & Property Care, and Snow Removal Booking */
+/* BB SERVICES — Junk Removal, Garage, Lawn & Property Care, and Snow Removal Booking */
 (function () {
 'use strict';
 
@@ -14,7 +14,7 @@ const SNOW = {
 
 const names = {
   [GARAGE]: 'Garage Cleaning',
-  [JUNK]: 'Trash & Junk Removal',
+  [JUNK]: 'Junk Removal',
   ...SNOW
 };
 
@@ -25,11 +25,12 @@ const garageRates = {
 };
 
 const junkRates = {
-  small: 95,
-  quarter: 145,
-  half: 225,
-  threequarter: 325,
-  full: 425
+  single: 150,
+  small: 175,
+  quarter: 295,
+  half: 475,
+  threequarter: 695,
+  full: 895
 };
 
 const lawnServices = [
@@ -64,7 +65,7 @@ function addOption() {
 
   [
     [GARAGE, 'Garage Cleaning'],
-    [JUNK, 'Trash & Junk Removal'],
+    [JUNK, 'Junk Removal'],
     ...lawnServices.map(x => [x[0], x[1]]),
     ...Object.entries(SNOW)
   ].forEach(([value, label]) => {
@@ -83,8 +84,8 @@ function addCategory() {
 
   section.innerHTML = `
     <div class="category-head">
-      <h2>Cleaning &amp; Removal Services</h2>
-      <p>Mobile cleaning and removal services available for online booking.</p>
+      <h2>Garage Cleaning &amp; Junk Removal</h2>
+      <p>Residential garage cleaning and volume-based junk removal.</p>
     </div>
     <div class="services">
       <div class="service">
@@ -93,8 +94,8 @@ function addCategory() {
         <button type="button" data-add="garage-cleaning">Book Online</button>
       </div>
       <div class="service">
-        <strong>Trash &amp; Junk Removal</strong>
-        <span>Mobile trash and junk removal with estimates based on load size.</span>
+        <strong>Junk Removal</strong>
+        <span>Furniture, appliances, household clutter, garage cleanouts, and other approved non-hazardous items. Pricing is based on load size.</span>
         <button type="button" data-add="trash-junk-removal">Book Online</button>
       </div>
     </div>
@@ -221,11 +222,12 @@ function fields() {
       'junkLoadField',
       'Estimated Junk Load Size',
       `<option value="">Select estimated load</option>
-       <option value="small">Small load / up to 1/4 truck — $95</option>
-       <option value="quarter">1/4 truck — $145</option>
-       <option value="half">1/2 truck — $225</option>
-       <option value="threequarter">3/4 truck — $325</option>
-       <option value="full">Full truck — $425</option>`,
+       <option value="single">Single bulky item / minimum pickup — $150</option>
+       <option value="small">Small load / up to 1/8 truck — $175</option>
+       <option value="quarter">1/4 truck — $295</option>
+       <option value="half">1/2 truck — $475</option>
+       <option value="threequarter">3/4 truck — $695</option>
+       <option value="full">Full truck — $895</option>`,
       'junkLoad'
     ]
   ];
@@ -246,6 +248,28 @@ function fields() {
 
     grid.insertBefore(div, date);
   });
+
+  if (!$('junkTypeField')) {
+    const div = document.createElement('div');
+    div.className = 'field full hidden additional-field';
+    div.id = 'junkTypeField';
+    div.innerHTML = `
+      <label for="junkType">What would you like removed? <span class="required">*</span></label>
+      <select id="junkType">
+        <option value="">Select item or material type</option>
+        <option value="Furniture and household items">Furniture and household items</option>
+        <option value="Appliances">Standard household appliances</option>
+        <option value="Boxes, bags, and general clutter">Boxes, bags, and general household clutter</option>
+        <option value="Garage, basement, or attic cleanout">Garage, basement, or attic cleanout</option>
+        <option value="Yard debris">Yard debris and outdoor items</option>
+        <option value="Mixed household junk">Mixed household junk</option>
+        <option value="Construction debris or heavy materials — custom quote">Construction debris, concrete, dirt, tile, or other heavy materials (custom quote)</option>
+        <option value="Specialty or other items — custom quote">Mattresses, tires, electronics, refrigerators, or other specialty items (custom quote)</option>
+      </select>
+      <p class="estimate-note">Heavy materials and specialty items require review because disposal and handling costs vary.</p>
+    `;
+    grid.insertBefore(div, date);
+  }
 
   if (!$('additionalAccessField')) {
     const div = document.createElement('div');
@@ -268,12 +292,14 @@ function fields() {
 
     div.innerHTML = `
       <div class="note">
-        <strong>Trash &amp; Junk Removal — Customer Requirement</strong>
-        <p>If an item is still usable, please do not intentionally damage,
-        destroy, or disassemble it before BB SERVICES arrives. Keep associated
-        accessories whenever possible.</p>
-        <p>BB SERVICES may use eligible usable items for company purposes,
-        resell them, or donate them to people in need.</p>
+        <strong>Junk Removal — Customer Authorization</strong>
+        <p>You must own the items or have permission from the owner to authorize their removal. Only the items identified and approved for removal will be taken.</p>
+        <p>BB SERVICES may sort suitable items for donation or recycling when practical. Resale or transfer of ownership will only occur with separate customer authorization.</p>
+        <p><strong>Disposal fees:</strong> Landfill, transfer-station, recycling, mattress, appliance, and other specialty disposal charges are not included in the service charge. BB will disclose the applicable facility charge and obtain your approval before disposal. Documented disposal charges are billed separately at actual cost.</p>
+        <label class="contact-check">
+          <input type="checkbox" id="junkConditionAgreement">
+          <span>I confirm that I own these items or am authorized by the owner to have them removed, and I understand that disposal fees are separate and require approval. <span class="required">*</span></span>
+        </label>
         <label class="contact-check">
           <input type="checkbox" id="junkConditionAgreement">
           <span>I understand and agree not to intentionally damage usable
@@ -358,6 +384,7 @@ function mode() {
   $('garageSizeField')?.classList.toggle('hidden', service !== GARAGE);
   $('junkLoadField')?.classList.toggle('hidden', service !== JUNK);
   $('junkRequirementField')?.classList.toggle('hidden', service !== JUNK);
+  $('junkTypeField')?.classList.toggle('hidden', service !== JUNK);
 
   $('additionalAccessField')?.classList.toggle(
     'hidden',
@@ -508,13 +535,18 @@ function validAdd() {
   }
 
   if (v('service') === JUNK) {
+    if (!v('junkType')) {
+      alert('Please select the type of items or materials to be removed.');
+      $('junkType')?.focus();
+      return false;
+    }
     if (!junkRates[v('junkLoad')]) {
       alert('Please select an estimated junk load size.');
       return false;
     }
 
     if (!$('junkConditionAgreement')?.checked) {
-      alert('Please acknowledge the Trash & Junk Removal customer requirement before continuing.');
+      alert('Please confirm your authorization and understanding of separate disposal fees before continuing.');
       return false;
     }
   }
@@ -549,6 +581,10 @@ function showAdditionalEstimate() {
   }
 
   const note = document.querySelector('#estimate .estimate-note');
+
+  if (note && v('service') === JUNK) {
+    note.textContent = 'This estimate covers BB SERVICES labor, loading, and hauling only. Disposal, landfill, transfer-station, recycling, and specialty-item fees are not included. BB will confirm the applicable facility charges with you and obtain approval before disposal; approved charges are billed separately at documented actual cost. Heavy materials and specialty items require a custom quote.';
+  }
 
   if (note && isSnow) {
     note.textContent =
