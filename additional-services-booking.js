@@ -1,5 +1,5 @@
 
-/* BB SERVICES — Junk Removal, Garage, Lawn & Property Care, and Snow Removal Booking */
+/* BB SERVICES — Garage, Lawn & Property Care, and Snow Removal Booking */
 (function () {
 'use strict';
 
@@ -14,7 +14,7 @@ const SNOW = {
 
 const names = {
   [GARAGE]: 'Garage Cleaning',
-  [JUNK]: 'Junk Removal',
+  [JUNK]: 'Trash & Junk Removal',
   ...SNOW
 };
 
@@ -25,12 +25,11 @@ const garageRates = {
 };
 
 const junkRates = {
-  single: 150,
-  small: 175,
-  quarter: 295,
-  half: 475,
-  threequarter: 695,
-  full: 895
+  small: 95,
+  quarter: 145,
+  half: 225,
+  threequarter: 325,
+  full: 425
 };
 
 const lawnServices = [
@@ -65,7 +64,7 @@ function addOption() {
 
   [
     [GARAGE, 'Garage Cleaning'],
-    [JUNK, 'Junk Removal'],
+    [JUNK, 'Trash & Junk Removal'],
     ...lawnServices.map(x => [x[0], x[1]]),
     ...Object.entries(SNOW)
   ].forEach(([value, label]) => {
@@ -94,44 +93,9 @@ function addCategory() {
         <button type="button" data-add="garage-cleaning">Book Online</button>
       </div>
       <div class="service">
-        <strong>Furniture Removal</strong>
-        <span>Removal of approved couches, chairs, tables, dressers, and other household furniture.</span>
-        <button type="button" data-add="trash-junk-removal" data-junk-type="Furniture and household items">Book Online</button>
-      </div>
-      <div class="service">
-        <strong>Appliance Removal</strong>
-        <span>Removal of standard household appliances. Refrigerators and specialty appliances require a custom quote.</span>
-        <button type="button" data-add="trash-junk-removal" data-junk-type="Appliances">Book Online</button>
-      </div>
-      <div class="service">
-        <strong>Household Junk &amp; Clutter</strong>
-        <span>Boxes, bags, and general household items you no longer need.</span>
-        <button type="button" data-add="trash-junk-removal" data-junk-type="Boxes, bags, and general clutter">Book Online</button>
-      </div>
-      <div class="service">
-        <strong>Garage, Basement &amp; Attic Cleanouts</strong>
-        <span>Clear out approved household items from garages, basements, attics, and storage areas.</span>
-        <button type="button" data-add="trash-junk-removal" data-junk-type="Garage, basement, or attic cleanout">Book Online</button>
-      </div>
-      <div class="service">
-        <strong>Yard Debris Removal</strong>
-        <span>Removal of approved branches, bagged leaves, and ordinary outdoor debris.</span>
-        <button type="button" data-add="trash-junk-removal" data-junk-type="Yard debris">Book Online</button>
-      </div>
-      <div class="service">
-        <strong>Mixed Junk Removal</strong>
-        <span>Removal of mixed, non-hazardous household items based on truck space used.</span>
-        <button type="button" data-add="trash-junk-removal" data-junk-type="Mixed household junk">Book Online</button>
-      </div>
-      <div class="service">
-        <strong>Construction &amp; Heavy Debris</strong>
-        <span>Concrete, dirt, tile, renovation debris, and heavy materials require an individual quote.</span>
-        <button type="button" data-add="trash-junk-removal" data-junk-type="Construction debris or heavy materials — custom quote">Request Quote</button>
-      </div>
-      <div class="service">
-        <strong>Specialty Item Removal</strong>
-        <span>Mattresses, tires, electronics, refrigerators, and other items with special handling or disposal requirements require a custom quote.</span>
-        <button type="button" data-add="trash-junk-removal" data-junk-type="Specialty or other items — custom quote">Request Quote</button>
+        <strong>Trash &amp; Junk Removal</strong>
+        <span>Mobile trash and junk removal with estimates based on load size.</span>
+        <button type="button" data-add="trash-junk-removal">Book Online</button>
       </div>
     </div>
   `;
@@ -142,12 +106,7 @@ function addCategory() {
     .addEventListener('click', () => section.classList.toggle('open'));
 
   section.querySelectorAll('[data-add]').forEach(button => {
-    button.addEventListener('click', () => {
-      openAdd(button.dataset.add);
-      if (button.dataset.junkType && $('junkType')) {
-        $('junkType').value = button.dataset.junkType;
-      }
-    });
+    button.addEventListener('click', () => openAdd(button.dataset.add));
   });
 }
 
@@ -289,28 +248,6 @@ function fields() {
     grid.insertBefore(div, date);
   });
 
-  if (!$('junkTypeField')) {
-    const div = document.createElement('div');
-    div.className = 'field full hidden additional-field';
-    div.id = 'junkTypeField';
-    div.innerHTML = `
-      <label for="junkType">What would you like removed? <span class="required">*</span></label>
-      <select id="junkType">
-        <option value="">Select item or material type</option>
-        <option value="Furniture and household items">Furniture and household items</option>
-        <option value="Appliances">Standard household appliances</option>
-        <option value="Boxes, bags, and general clutter">Boxes, bags, and general household clutter</option>
-        <option value="Garage, basement, or attic cleanout">Garage, basement, or attic cleanout</option>
-        <option value="Yard debris">Yard debris and outdoor items</option>
-        <option value="Mixed household junk">Mixed household junk</option>
-        <option value="Construction debris or heavy materials — custom quote">Construction debris, concrete, dirt, tile, or other heavy materials (custom quote)</option>
-        <option value="Specialty or other items — custom quote">Mattresses, tires, electronics, refrigerators, or other specialty items (custom quote)</option>
-      </select>
-      <p class="estimate-note">Heavy materials and specialty items require review because disposal and handling costs vary.</p>
-    `;
-    grid.insertBefore(div, date);
-  }
-
   if (!$('additionalAccessField')) {
     const div = document.createElement('div');
     div.className = 'field full hidden additional-field';
@@ -424,7 +361,6 @@ function mode() {
   $('garageSizeField')?.classList.toggle('hidden', service !== GARAGE);
   $('junkLoadField')?.classList.toggle('hidden', service !== JUNK);
   $('junkRequirementField')?.classList.toggle('hidden', service !== JUNK);
-  $('junkTypeField')?.classList.toggle('hidden', service !== JUNK);
 
   $('additionalAccessField')?.classList.toggle(
     'hidden',
@@ -576,11 +512,6 @@ function validAdd() {
   }
 
   if (v('service') === JUNK) {
-    if (!v('junkType')) {
-      alert('Please select the type of items or materials to be removed.');
-      $('junkType')?.focus();
-      return false;
-    }
     if (!junkRates[v('junkLoad')]) {
       alert('Please select an estimated junk load size.');
       return false;
@@ -601,11 +532,10 @@ function showAdditionalEstimate() {
   if (!validAdd()) return;
 
   const isSnow = !!SNOW[v('service')];
-  const isJunkQuote = v('service') === JUNK && /custom quote/i.test(v('junkType'));
   const amount = total();
 
   if ($('laborPrice')) {
-    $('laborPrice').textContent = (isSnow || isJunkQuote)
+    $('laborPrice').textContent = isSnow
       ? 'Quote required'
       : '
   }
@@ -624,9 +554,7 @@ function showAdditionalEstimate() {
 
   const note = document.querySelector('#estimate .estimate-note');
 
-  if (note && isJunkQuote) {
-    note.textContent = 'This material or item category requires an individual review. BB will confirm labor, hauling, handling, and disposal costs with you before accepting the job.';
-  } else if (note && v('service') === JUNK) {
+  if (note && v('service') === JUNK) {
     note.textContent = 'This estimate covers BB SERVICES labor, loading, and hauling only. Disposal, landfill, transfer-station, recycling, and specialty-item fees are not included. BB will confirm the applicable facility charges with you and obtain approval before disposal; approved charges are billed separately at documented actual cost. Heavy materials and specialty items require a custom quote.';
   }
 
