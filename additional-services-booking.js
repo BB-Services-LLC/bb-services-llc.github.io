@@ -269,7 +269,6 @@ function fields() {
 
     div.innerHTML = `
       <div class="note">
-        <strong>Junk Removal — Customer Authorization</strong>
         <p>You must own the items or have permission from the owner to authorize their removal. Only the items identified and approved for removal will be taken.</p>
         <p>BB SERVICES may sort suitable items for donation or recycling when practical. Resale or transfer of ownership will only occur with separate customer authorization.</p>
         <p><strong>Disposal fees:</strong> Landfill, transfer-station, recycling, mattress, appliance, and other specialty disposal charges are not included in the service charge. BB will disclose the applicable facility charge and obtain your approval before disposal. Documented disposal charges are billed separately at actual cost.</p>
