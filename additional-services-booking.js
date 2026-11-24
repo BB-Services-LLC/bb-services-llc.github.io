@@ -94,9 +94,44 @@ function addCategory() {
         <button type="button" data-add="garage-cleaning">Book Online</button>
       </div>
       <div class="service">
-        <strong>Junk Removal</strong>
-        <span>Furniture, appliances, household clutter, garage cleanouts, and other approved non-hazardous items. Pricing is based on load size.</span>
-        <button type="button" data-add="trash-junk-removal">Book Online</button>
+        <strong>Furniture Removal</strong>
+        <span>Removal of approved couches, chairs, tables, dressers, and other household furniture.</span>
+        <button type="button" data-add="trash-junk-removal" data-junk-type="Furniture and household items">Book Online</button>
+      </div>
+      <div class="service">
+        <strong>Appliance Removal</strong>
+        <span>Removal of standard household appliances. Refrigerators and specialty appliances require a custom quote.</span>
+        <button type="button" data-add="trash-junk-removal" data-junk-type="Appliances">Book Online</button>
+      </div>
+      <div class="service">
+        <strong>Household Junk &amp; Clutter</strong>
+        <span>Boxes, bags, and general household items you no longer need.</span>
+        <button type="button" data-add="trash-junk-removal" data-junk-type="Boxes, bags, and general clutter">Book Online</button>
+      </div>
+      <div class="service">
+        <strong>Garage, Basement &amp; Attic Cleanouts</strong>
+        <span>Clear out approved household items from garages, basements, attics, and storage areas.</span>
+        <button type="button" data-add="trash-junk-removal" data-junk-type="Garage, basement, or attic cleanout">Book Online</button>
+      </div>
+      <div class="service">
+        <strong>Yard Debris Removal</strong>
+        <span>Removal of approved branches, bagged leaves, and ordinary outdoor debris.</span>
+        <button type="button" data-add="trash-junk-removal" data-junk-type="Yard debris">Book Online</button>
+      </div>
+      <div class="service">
+        <strong>Mixed Junk Removal</strong>
+        <span>Removal of mixed, non-hazardous household items based on truck space used.</span>
+        <button type="button" data-add="trash-junk-removal" data-junk-type="Mixed household junk">Book Online</button>
+      </div>
+      <div class="service">
+        <strong>Construction &amp; Heavy Debris</strong>
+        <span>Concrete, dirt, tile, renovation debris, and heavy materials require an individual quote.</span>
+        <button type="button" data-add="trash-junk-removal" data-junk-type="Construction debris or heavy materials — custom quote">Request Quote</button>
+      </div>
+      <div class="service">
+        <strong>Specialty Item Removal</strong>
+        <span>Mattresses, tires, electronics, refrigerators, and other items with special handling or disposal requirements require a custom quote.</span>
+        <button type="button" data-add="trash-junk-removal" data-junk-type="Specialty or other items — custom quote">Request Quote</button>
       </div>
     </div>
   `;
@@ -107,7 +142,12 @@ function addCategory() {
     .addEventListener('click', () => section.classList.toggle('open'));
 
   section.querySelectorAll('[data-add]').forEach(button => {
-    button.addEventListener('click', () => openAdd(button.dataset.add));
+    button.addEventListener('click', () => {
+      openAdd(button.dataset.add);
+      if (button.dataset.junkType && $('junkType')) {
+        $('junkType').value = button.dataset.junkType;
+      }
+    });
   });
 }
 
