@@ -17,11 +17,11 @@
 </style>
 <script src="vehicle-database.js" defer></script>
 <script src="booking-submit.js?v=20261117v1" defer></script>
-<script src="house-cleaning-booking.js?v=20260829v1" defer></script>
+
 
 <script src="automotive-booking-fix.js?v=20261109v1" defer></script>
 
-<script src="additional-services-booking.js?v=20261117v1" defer></script>
+<script src="additional-services-booking.js?v=20261124v1" defer></script>
 </head>
 <body>
 <header><div class="nav"><a class="brand" href="index.html">BB<small>SERVICES</small></a><nav class="navlinks"><a href="index.html">HOME</a><a href="about.html">ABOUT</a><a href="policies.html">POLICIES &amp; TERMS</a></nav></div></header>
@@ -73,9 +73,9 @@ function updateServiceAuthorization(){
   'trimming-edging':'Customers must confirm that their HOA, landlord, property manager, or other applicable property rules permit BB SERVICES to perform trimming and edging at this location.',
   'seasonal-yard-cleanup':'Customers must confirm that their HOA, landlord, property manager, or other applicable property rules permit BB SERVICES to perform seasonal yard cleanup at this location.',
   'property-maintenance':'Customers must confirm that their HOA, landlord, property manager, or other applicable property rules permit BB SERVICES to perform the requested property maintenance at this location.',
-  'house-cleaning':'Customers must confirm that their lease, landlord, apartment complex, property manager, or other applicable property rules permit BB SERVICES to enter and perform house cleaning at this residence.',
+  
   'garage-cleaning':'Customers must confirm that their HOA, landlord, property manager, or other applicable property rules permit BB SERVICES to access and clean the garage.',
-  'trash-junk-removal':'Customers must confirm that their HOA, landlord, property manager, or other applicable property rules permit BB SERVICES to access the property and remove the requested items.',
+  'trash-junk-removal':'Customers must confirm that they own the items or have the owner’s permission, and that BB SERVICES is authorized to access the property and remove only the approved items.',
   'snow-removal':'Customers must confirm that their HOA, landlord, property manager, or other applicable property rules permit BB SERVICES to clear the requested driveway, walkway, parking area, or other designated space.',
   'outdoor-furniture':'Customers must confirm that their HOA, landlord, property manager, or other applicable property rules permit BB SERVICES to access and clean the outdoor furniture.',
   'patio-cleaning':'Customers must confirm that their HOA, landlord, property manager, or other applicable property rules permit BB SERVICES to access and clean the patio.',
@@ -90,7 +90,7 @@ function updateServiceAuthorization(){
 window.updateServiceAuthorization=updateServiceAuthorization;
 function updateSpecial(){const s=value('service');special.classList.add('hidden');specialOptions.innerHTML='';if(s==='wipers')show('Which wiper(s) need replacement?',['Driver-side','Passenger-side','Rear','All wipers'],'checkbox');if(s==='tire-replacement')show('How many tires need replacement?',['1 tire','2 tires','3 tires','4 tires'],'radio');if(s==='headlight')show('How many headlight assemblies?',['1 headlight','2 headlights'],'radio');if(s==='brake-light')show('How many brake/tail light assemblies?',['1 light','2 lights'],'radio');if(s==='fluid')show('Which fluid top-off?',['Engine oil','Coolant','Brake fluid','Transmission fluid','Windshield washer fluid'],'radio')}
 function show(label,opts,type){special.classList.remove('hidden');specialLabel.textContent=label;specialOptions.innerHTML=opts.map((o,i)=>`<label><input type="${type}" name="specialChoice" value="${o}" ${i===0?'checked':''}> ${o}</label>`).join('')}
-service.addEventListener('change',()=>{updateSpecial();updateServiceAuthorization();if(value('service')!=='house-cleaning')setStep(2)});
+service.addEventListener('change',()=>{updateSpecial();updateServiceAuthorization();setStep(2)});
 
 function calculateEstimate(){
  const s=value('service');
