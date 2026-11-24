@@ -528,7 +528,6 @@ function validAdd() {
 
 function showAdditionalEstimate() {
   mode();
-
   if (!validAdd()) return;
 
   const service = v('service');
@@ -536,22 +535,26 @@ function showAdditionalEstimate() {
   const amount = total();
   const quoteRequired = isSnow || amount === null;
 
-  if ($('laborPrice')) $('laborPrice').textContent = quoteRequired ? 'Quote required' : '
-
-  if (note && v('service') === JUNK) {
-    note.textContent = 'This estimate covers BB SERVICES labor, loading, and hauling only. Disposal, landfill, transfer-station, recycling, and specialty-item fees are not included. BB will confirm the applicable facility charges with you and obtain approval before disposal; approved charges are billed separately at documented actual cost. Heavy materials and specialty items require a custom quote.';
+  if ($('laborPrice')) {
+    $('laborPrice').textContent = quoteRequired ? 'Quote required' : '$' + Number(amount || 0).toFixed(2);
+  }
+  if ($('partsPrice')) {
+    $('partsPrice').textContent = quoteRequired ? 'To be determined' : '$0.00';
+  }
+  if ($('totalPrice')) {
+    $('totalPrice').textContent = quoteRequired ? 'Quote required' : '$' + Number(amount || 0).toFixed(2);
   }
 
+  const note = document.querySelector('#estimate .estimate-note');
+  if (note && service === JUNK) {
+    note.textContent = 'This estimate covers BB SERVICES labor, loading, and hauling only. Disposal, landfill, transfer-station, recycling, and specialty-item fees are not included. BB will confirm the applicable facility charges with you and obtain approval before disposal; approved charges are billed separately at documented actual cost. Heavy materials and specialty items require a custom quote.';
+  }
   if (note && isSnow) {
-    note.textContent =
-      'BB will provide a quote based on snowfall accumulation, ' +
-      'the selected service area, and property conditions. ' +
-      'Pricing will be confirmed with you before scheduling.';
+    note.textContent = 'BB will provide a quote based on snowfall accumulation, the selected service area, and property conditions. Pricing will be confirmed with you before scheduling.';
   }
 
   $('estimate')?.classList.add('open');
   $('p3')?.classList.add('active');
-
   $('estimate')?.scrollIntoView({ behavior: 'smooth' });
 }
 
