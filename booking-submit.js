@@ -140,9 +140,9 @@ window.DASH_PRICING={COSTS: COSTS,LAWN:LAWN,AUTO:AUTO,estimate:estimate};
       if (!value("pcSizeSelect")) { alert("Please select the service size."); $("pcSizeSelect")?.focus(); return false; }
       if (!$("pcWaterAgree")?.checked) { alert("Please confirm access to water when required."); return false; }
     }
-    if (["yes","unsure"].includes(value("addressRestrictions").toLowerCase())) {
-      if (!value("restrictionDetails")) { alert("Please explain the address restriction or uncertainty."); $("restrictionDetails")?.focus(); return false; }
-      if (!$("restrictionProof")?.files?.[0]) { alert("Please upload the required proof/authorization document."); $("restrictionProof")?.focus(); return false; }
+    if (value("addressRestrictions").toLowerCase() !== "yes") {
+      alert("Please confirm that BB SERVICES is permitted to perform the requested service at this location before submitting.");
+      $("addressRestrictions")?.focus(); return false;
     }
     if (!$("consent")?.checked) { alert("Please confirm the contact authorization before submitting."); $("consent")?.focus(); return false; }
     const snowService=["walkway","driveway","around-house"].includes(service);
@@ -177,7 +177,7 @@ window.DASH_PRICING={COSTS: COSTS,LAWN:LAWN,AUTO:AUTO,estimate:estimate};
         service_name:selected?.textContent?.trim() || value("service"),
         ...address,
         restriction_answer:value("addressRestrictions").toLowerCase(),
-        restriction_details:value("restrictionDetails"),
+        restriction_details:"Customer confirmed that BB SERVICES is permitted to perform the requested service at this location.",
         preferred_date:value("date"),
         preferred_time:value("time"),
         first_name:value("firstName"),
@@ -196,12 +196,6 @@ window.DASH_PRICING={COSTS: COSTS,LAWN:LAWN,AUTO:AUTO,estimate:estimate};
       };
 
       const payload={request};
-      const proofFile=$("restrictionProof")?.files?.[0];
-      if (proofFile) {
-        if (proofFile.size > 5*1024*1024) throw new Error("The proof document must be 5 MB or smaller.");
-        payload.proof_file=await readProofFile(proofFile);
-      }
-
       const response=await fetch(API_URL,{
         method:"POST",
         headers:{"Content-Type":"application/json","apikey":PUBLIC_KEY},
