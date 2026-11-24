@@ -87,6 +87,7 @@ function updateServiceAuthorization(){
  const label=document.querySelector('label[for="addressRestrictions"]');
  if(label)label.innerHTML='Do you confirm that BB SERVICES is permitted to perform '+(service.options[service.selectedIndex]?.text||'the requested service')+' at this location? <span class="required">*</span>';
 }
+window.updateServiceAuthorization=updateServiceAuthorization;
 function updateSpecial(){const s=value('service');special.classList.add('hidden');specialOptions.innerHTML='';if(s==='wipers')show('Which wiper(s) need replacement?',['Driver-side','Passenger-side','Rear','All wipers'],'checkbox');if(s==='tire-replacement')show('How many tires need replacement?',['1 tire','2 tires','3 tires','4 tires'],'radio');if(s==='headlight')show('How many headlight assemblies?',['1 headlight','2 headlights'],'radio');if(s==='brake-light')show('How many brake/tail light assemblies?',['1 light','2 lights'],'radio');if(s==='fluid')show('Which fluid top-off?',['Engine oil','Coolant','Brake fluid','Transmission fluid','Windshield washer fluid'],'radio')}
 function show(label,opts,type){special.classList.remove('hidden');specialLabel.textContent=label;specialOptions.innerHTML=opts.map((o,i)=>`<label><input type="${type}" name="specialChoice" value="${o}" ${i===0?'checked':''}> ${o}</label>`).join('')}
 service.addEventListener('change',()=>{updateSpecial();updateServiceAuthorization();if(value('service')!=='house-cleaning')setStep(2)});
@@ -102,7 +103,7 @@ function calculateEstimate(){
  estimate.classList.add('open');setStep(3);estimate.scrollIntoView({behavior:'smooth'});
 }
 function reviewBooking(){
- const rows=[['Service',service.options[service.selectedIndex]?.text||''],['Date',value('date')],['Time',value('time')],['Location',fullAddress()],['Estimated Total',value('totalPrice')]];
+ const rows=[['Service',service.options[service.selectedIndex]?.text||''],['Location Authorization',value('addressRestrictions')==='yes'?'Customer confirmed permission for this service':'Not confirmed'],['Date',value('date')],['Time',value('time')],['Location',fullAddress()],['Estimated Total',value('totalPrice')]];
  const details=window.DASH_COLLECT_SERVICE_DETAILS?window.DASH_COLLECT_SERVICE_DETAILS():{};
  const detailText=Object.values(details).map(d=>d&&d.label?d.label+': '+(d.values||[]).join(', '):'').filter(Boolean).join('; ');
  if(detailText)rows.splice(1,0,['Service Details',detailText]);
