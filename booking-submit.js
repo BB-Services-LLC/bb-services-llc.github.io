@@ -133,7 +133,6 @@ window.DASH_PRICING={COSTS: COSTS,LAWN:LAWN,AUTO:AUTO,estimate:estimate};
     if (service==="house-cleaning" && !value("hcSize")) { alert("Please select the home size."); $("hcSize")?.focus(); return false; }
     if (service==="garage-cleaning" && !value("garageSize")) { alert("Please select the garage size."); $("garageSize")?.focus(); return false; }
     if (service==="trash-junk-removal") {
-      if (!value("junkType")) { alert("Please select the type of items or materials to be removed."); $("junkType")?.focus(); return false; }
       if (!value("junkLoad")) { alert("Please select the estimated junk load size."); $("junkLoad")?.focus(); return false; }
       if (!$("junkConditionAgreement")?.checked) { alert("Please acknowledge the Trash & Junk Removal requirement."); return false; }
     }
@@ -147,9 +146,8 @@ window.DASH_PRICING={COSTS: COSTS,LAWN:LAWN,AUTO:AUTO,estimate:estimate};
     }
     if (!$("consent")?.checked) { alert("Please confirm the contact authorization before submitting."); $("consent")?.focus(); return false; }
     const snowService=["walkway","driveway","around-house"].includes(service);
-    const customJunkQuote=service==="trash-junk-removal" && /custom quote/i.test(value("junkType"));
     const total=Number(String($("totalPrice")?.textContent||"").replace(/[^\d.]/g,""));
-    if (!snowService && !customJunkQuote && (!Number.isFinite(total) || total <= 0)) {
+    if (!snowService && (!Number.isFinite(total) || total <= 0)) {
       alert("Please calculate your estimate before submitting the service request.");
       return false;
     }
@@ -194,7 +192,7 @@ window.DASH_PRICING={COSTS: COSTS,LAWN:LAWN,AUTO:AUTO,estimate:estimate};
         vehicle_engine:value("engine"),
         vehicle_trim:value("trim"),
         service_details:selectedServiceDetails(),
-        estimated_total:(["walkway","driveway","around-house"].includes(value("service")) || (value("service")==="trash-junk-removal" && /custom quote/i.test(value("junkType")))) ? null : (Number(String($("totalPrice")?.textContent||"").replace(/[^\d.]/g,"")) || null)
+        estimated_total:["walkway","driveway","around-house"].includes(value("service")) ? null : (Number(String($("totalPrice")?.textContent||"").replace(/[^\d.]/g,"")) || null)
       };
 
       const payload={request};
