@@ -211,7 +211,7 @@ window.DASH_PRICING={COSTS: COSTS,LAWN:LAWN,AUTO:AUTO,estimate:estimate};
       if (!response.ok || !result.ok) throw new Error(result.error || result.message || "Your request could not be submitted. Please try again.");
       const contact=$("contact");
       if (contact) {
-        contact.innerHTML='<div class="note notice"><strong>Request received.</strong><p>Your service request has been submitted to BB SERVICES.</p><p><strong>Request number:</strong> '+String(result.request_number||"Pending").replace(/[&<>"]/g,"")+'</p><p>This is not an appointment confirmation. BB will review your request and contact you about the next steps. If proof is required, your request will remain pending until it is reviewed.</p><p>Questions? Email supportdashservices@gmail.com or call (857) 220-7228.</p></div>';
+        contact.innerHTML='<div class="note notice"><strong>Request received.</strong><p>Your service request has been submitted to BB SERVICES.</p><p><strong>Request number:</strong> '+String(result.request_number||"Pending").replace(/[&<>"]/g,"")+'</p><p>This is not an appointment confirmation. BB will review your request and contact you about the next steps. If proof is required, your request will remain pending until it is reviewed.</p><p>Questions? Email support.bbservicesllc@gmail.com or call (857) 220-7228.</p></div>';
         contact.scrollIntoView({behavior:"smooth",block:"start"});
       }
     } catch (error) {
