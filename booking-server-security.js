@@ -3,7 +3,7 @@
 (function(){
   'use strict';
   var ENDPOINT='https://roywoofgypiyoobdcrwx.supabase.co/functions/v1/create-service-request';
-  var SUPPORT_EMAIL='supportdashservices@gmail.com';
+  var SUPPORT_EMAIL='support.bbservicesllc@gmail.com';
   var originalSubmit=null;
   var attached=false;
 
