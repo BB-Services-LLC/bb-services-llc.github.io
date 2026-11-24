@@ -262,31 +262,7 @@ function fields() {
     grid.insertBefore(div, date);
   }
 
-  if (!$('junkRequirementField')) {
-    const div = document.createElement('div');
-    div.className = 'field full hidden additional-field';
-    div.id = 'junkRequirementField';
 
-    div.innerHTML = `
-      <div class="note">
-        <p>You must own the items or have permission from the owner to authorize their removal. Only the items identified and approved for removal will be taken.</p>
-        <p>BB SERVICES may sort suitable items for donation or recycling when practical. Resale or transfer of ownership will only occur with separate customer authorization.</p>
-        <p><strong>Disposal fees:</strong> Landfill, transfer-station, recycling, mattress, appliance, and other specialty disposal charges are not included in the service charge. BB will disclose the applicable facility charge and obtain your approval before disposal. Documented disposal charges are billed separately at actual cost.</p>
-        <label class="contact-check">
-          <input type="checkbox" id="junkConditionAgreement">
-          <span>I confirm that I own these items or am authorized by the owner to have them removed, and I understand that disposal fees are separate and require approval. <span class="required">*</span></span>
-        </label>
-        <label class="contact-check">
-          <input type="checkbox" id="junkConditionAgreement">
-          <span>I understand and agree not to intentionally damage usable
-          items or their associated accessories before pickup.
-          <span class="required">*</span></span>
-        </label>
-      </div>
-    `;
-
-    grid.insertBefore(div, date);
-  }
 }
 
 function snowSaltField() {
@@ -359,7 +335,6 @@ function mode() {
 
   $('garageSizeField')?.classList.toggle('hidden', service !== GARAGE);
   $('junkLoadField')?.classList.toggle('hidden', service !== JUNK);
-  $('junkRequirementField')?.classList.toggle('hidden', service !== JUNK);
 
   $('additionalAccessField')?.classList.toggle(
     'hidden',
@@ -510,16 +485,9 @@ function validAdd() {
     return false;
   }
 
-  if (v('service') === JUNK) {
-    if (!junkRates[v('junkLoad')]) {
-      alert('Please select an estimated junk load size.');
-      return false;
-    }
-
-    if (!$('junkConditionAgreement')?.checked) {
-      alert('Please confirm your authorization and understanding of separate disposal fees before continuing.');
-      return false;
-    }
+  if (v('service') === JUNK && !junkRates[v('junkLoad')]) {
+    alert('Please select an estimated junk load size.');
+    return false;
   }
 
   return true;
