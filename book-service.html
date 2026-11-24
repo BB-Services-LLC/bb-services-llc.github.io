@@ -95,7 +95,7 @@ service.addEventListener('change',()=>{updateSpecial();updateServiceAuthorizatio
 
 function calculateEstimate(){
  const s=value('service');
- if(s==='house-cleaning'&&typeof window.calculateHouseCleaningEstimate==='function'){window.calculateHouseCleaningEstimate();return}
+
  const result=window.DASH_PRICING&&typeof window.DASH_PRICING.estimate==='function'?window.DASH_PRICING.estimate(s):null;
  if(!result){alert('Pricing is not available for this service. Please contact BB before submitting.');return}
  laborPrice.textContent='$'+Number(result.total||0).toFixed(2);
