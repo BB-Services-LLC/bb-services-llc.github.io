@@ -33,7 +33,7 @@ function estimate(service){
  const internal=(COSTS.employeeHourly*(1+COSTS.employerBurdenRate)*hours)+materials+(COSTS.equipmentOverheadPerLaborHour*hours)+COSTS.businessOverheadPerJob+COSTS.travelBaseFee;
  let total=Math.max(internal+10,internal/(1-COSTS.targetProfitMargin));
  if(service==='lawn-mowing'){
-  const lawnStartingPrices={small:45,medium:90,large:75,xlarge:100};
+  const lawnStartingPrices={small:45,medium:75,large:90,xlarge:100};
   total=lawnStartingPrices[document.getElementById('lawnSize')?.value||'medium']||90;
  }
  return {labor:total,parts:0,total:total,cost:internal,profit:total-internal,minutes:minutes};
