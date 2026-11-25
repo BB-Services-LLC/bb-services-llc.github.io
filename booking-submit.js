@@ -18,6 +18,23 @@ const AUTO={oil:{minutes:45,parts:32},wipers:{minutes:20,parts:35},battery:{minu
 function choices(){return Array.from(document.querySelectorAll('input[name="specialChoice"]:checked')).map(x=>x.value)}
 function estimate(service){
  let item=LAWN[service]||AUTO[service]; if(!item)return null;
+
+ const propertyLaborPrices = {
+  'weed-removal': {small:150,medium:250,large:350,xlarge:450},
+  'mulch-installation': {small:250,medium:350,large:550,xlarge:750},
+  'decorative-rock': {small:300,medium:450,large:650,xlarge:850},
+  'yard-cleanup': {small:200,medium:300,large:450,xlarge:650},
+  'trimming-edging': {small:150,medium:200,large:300,xlarge:450},
+  'seasonal-yard-cleanup': {small:250,medium:450,large:650,xlarge:850},
+  'property-maintenance': {small:200,medium:300,large:450,xlarge:650}
+ };
+ if(propertyLaborPrices[service]){
+  const size=document.getElementById('propertySize')?.value||'';
+  const total=propertyLaborPrices[service][size];
+  if(!total)return null;
+  return {labor:total,parts:0,total,cost:null,profit:null,minutes:null,
+   note:'Labor estimate only. For mulch and decorative rock installation, materials and delivery are quoted separately. Any approved materials and delivery charges will be combined with labor into one final invoice price. Final pricing may vary with the actual work area, site conditions, access, and workload.'};
+ }
  let materials=item.materials===undefined?item.parts:item.materials, minutes=item.minutes;
  if(service==='lawn-mowing'){
   const size=document.getElementById('lawnSize')?.value||'medium';
@@ -129,6 +146,11 @@ window.DASH_PRICING={COSTS: COSTS,LAWN:LAWN,AUTO:AUTO,estimate:estimate};
       for (const id of ["year","make","model","engine","trim"]) {
         if (!value(id)) { alert("Please complete all vehicle information before submitting."); $(id)?.focus(); return false; }
       }
+    }
+    if (["weed-removal","mulch-installation","decorative-rock","yard-cleanup","trimming-edging","seasonal-yard-cleanup","property-maintenance"].includes(service) && !value("propertySize")) {
+      alert("Please select the approximate property size.");
+      $("propertySize")?.focus();
+      return false;
     }
     if (service==="house-cleaning" && !value("hcSize")) { alert("Please select the home size."); $("hcSize")?.focus(); return false; }
     if (service==="garage-cleaning" && !value("garageSize")) { alert("Please select the garage size."); $("garageSize")?.focus(); return false; }
