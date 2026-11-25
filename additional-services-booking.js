@@ -288,29 +288,42 @@ function snowSaltField() {
 function lawnSizeField() {
   const grid = document.querySelector('#booking .grid');
   const date = $('date')?.parentElement;
+  if (!grid || !date) return;
 
-  if (!grid || !date || $('lawnSizeField')) return;
+  if (!$('lawnSizeField')) {
+    const mowing = document.createElement('div');
+    mowing.className = 'field full hidden';
+    mowing.id = 'lawnSizeField';
+    mowing.innerHTML = `
+      <label for="lawnSize">Approximate Lawn Size <span class="required">*</span></label>
+      <select id="lawnSize" required>
+        <option value="">Select lawn size</option>
+        <option value="small">Small — Up to 5,000 sq. ft.</option>
+        <option value="medium">Medium — 5,001–10,000 sq. ft.</option>
+        <option value="large">Large — 10,001–20,000 sq. ft.</option>
+        <option value="xlarge">Extra Large — 20,001+ sq. ft.</option>
+      </select>
+    `;
+    grid.insertBefore(mowing, date);
+  }
 
-  const div = document.createElement('div');
-  div.className = 'field full hidden additional-field';
-  div.id = 'lawnSizeField';
-
-  div.innerHTML = `
-    <label for="lawnSize">
-      Approximate Lawn Size <span class="required">*</span>
-    </label>
-    <select id="lawnSize" required>
-      <option value="medium">Medium — up to 10,000 sq. ft. (standard)</option>
-      <option value="small">Small — up to 5,000 sq. ft.</option>
-      <option value="large">Large — 10,001–20,000 sq. ft.</option>
-      <option value="xlarge">Extra Large — 20,001–30,000 sq. ft.</option>
-    </select>
-    <p class="estimate-note">
-      Properties larger than 30,000 sq. ft. require a custom estimate.
-    </p>
-  `;
-
-  grid.insertBefore(div, date);
+  if (!$('propertySizeField')) {
+    const property = document.createElement('div');
+    property.className = 'field full hidden lawn-property-field';
+    property.id = 'propertySizeField';
+    property.innerHTML = `
+      <label for="propertySize">Approximate Property Size <span class="required">*</span></label>
+      <select id="propertySize" required>
+        <option value="">Select property size</option>
+        <option value="small">Small — Up to 5,000 sq. ft.</option>
+        <option value="medium">Medium — 5,001–10,000 sq. ft.</option>
+        <option value="large">Large — 10,001–20,000 sq. ft.</option>
+        <option value="xlarge">Extra Large — 20,001+ sq. ft.</option>
+      </select>
+      <p class="estimate-note">Choose based on total property size. Final pricing may be adjusted to reflect the actual area being serviced, property conditions, access, and workload. Mulch and decorative rock materials are quoted separately.</p>
+    `;
+    grid.insertBefore(property, date);
+  }
 }
 
 function mode() {
@@ -342,6 +355,7 @@ function mode() {
   );
 
   $('lawnSizeField')?.classList.toggle('hidden', service !== 'lawn-mowing');
+  $('propertySizeField')?.classList.toggle('hidden', !isLawn || service === 'lawn-mowing');
   $('snowSaltField')?.classList.toggle('hidden', !SNOW[service]);
 
   if (isAdditional) {
@@ -407,6 +421,7 @@ function openLawn(service) {
   }
 
   $('lawnSizeField')?.classList.toggle('hidden', service !== 'lawn-mowing');
+  $('propertySizeField')?.classList.toggle('hidden', service === 'lawn-mowing');
 
   if (typeof window.setStep === 'function') {
     window.setStep(2);
