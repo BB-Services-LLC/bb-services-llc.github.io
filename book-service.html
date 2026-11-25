@@ -97,22 +97,64 @@ service.addEventListener('change',()=>{updateSpecial();updateServiceAuthorizatio
 
 function calculateEstimate(){
  const s=value('service');
-
- const result=window.DASH_PRICING&&typeof window.DASH_PRICING.estimate==='function'?window.DASH_PRICING.estimate(s):null;
- if(!result){alert('Pricing is not available for this service. Please contact BB before submitting.');return}
- laborPrice.textContent='
+ const result=window.DASH_PRICING&&typeof window.DASH_PRICING.estimate==='function'
+   ? window.DASH_PRICING.estimate(s)
+   : null;
+ if(!result){
+  alert('Pricing is not available for this service. Please contact BB before submitting.');
+  return;
+ }
+ laborPrice.textContent='$'+Number(result.labor||0).toFixed(2);
+ partsPrice.textContent='$'+Number(result.parts||0).toFixed(2);
+ totalPrice.textContent='$'+Number(result.total||0).toFixed(2);
+ const estimateNote=estimate.querySelector('.estimate-note');
+ if(estimateNote){
+  estimateNote.textContent=result.note||'This is an estimate based on the selected service and currently available information. Final pricing may change if service conditions, parts, materials, taxes, fees, or additional work differ from the information provided. No appointment is confirmed by displaying this estimate.';
+ }
+ estimate.classList.add('open');
+ setStep(3);
+ estimate.scrollIntoView({behavior:'smooth'});
 }
 function reviewBooking(){
- const rows=[['Service',service.options[service.selectedIndex]?.text||''],['Location Authorization',value('addressRestrictions')==='yes'?'Customer confirmed permission for this service':'Not confirmed'],['Date',value('date')],['Time',value('time')],['Location',fullAddress()],['Estimated Total',value('totalPrice')]];
+ const rows=[
+  ['Service',service.options[service.selectedIndex]?.text||''],
+  ['Location Authorization',value('addressRestrictions')==='yes'?'Customer confirmed permission for this service':'Not confirmed'],
+  ['Date',value('date')],
+  ['Time',value('time')],
+  ['Location',fullAddress()],
+  ['Estimated Total',value('totalPrice')]
+ ];
  const details=window.DASH_COLLECT_SERVICE_DETAILS?window.DASH_COLLECT_SERVICE_DETAILS():{};
- const detailText=Object.values(details).map(d=>d&&d.label?d.label+': '+(d.values||[]).join(', '):'').filter(Boolean).join('; ');
+ const detailText=Object.values(details)
+  .map(d=>d&&d.label?d.label+': '+(d.values||[]).join(', '):'')
+  .filter(Boolean).join('; ');
  if(detailText)rows.splice(1,0,['Service Details',detailText]);
- const grid=document.getElementById('reviewGrid');grid.innerHTML='';
- rows.forEach(([label,val])=>{const cell=document.createElement('div');const strong=document.createElement('strong');strong.textContent=label;cell.appendChild(strong);cell.appendChild(document.createTextNode(val||'—'));grid.appendChild(cell)});
- review.classList.add('open');setStep(4);review.scrollIntoView({behavior:'smooth'});
+ const grid=document.getElementById('reviewGrid');
+ grid.innerHTML='';
+ rows.forEach(([label,val])=>{
+  const cell=document.createElement('div');
+  const strong=document.createElement('strong');
+  strong.textContent=label;
+  cell.appendChild(strong);
+  cell.appendChild(document.createTextNode(val||'—'));
+  grid.appendChild(cell);
+ });
+ review.classList.add('open');
+ setStep(4);
+ review.scrollIntoView({behavior:'smooth'});
 }
-function showContact(){contact.classList.add('open');setStep(5);contact.scrollIntoView({behavior:'smooth'})}
-function submitRequest(){if(typeof window.submitServiceRequest==='function'){window.submitServiceRequest();return}alert('Booking submission is currently unavailable.')}
+function showContact(){
+ contact.classList.add('open');
+ setStep(5);
+ contact.scrollIntoView({behavior:'smooth'});
+}
+function submitRequest(){
+ if(typeof window.submitServiceRequest==='function'){
+  window.submitServiceRequest();
+  return;
+ }
+ alert('Booking submission is currently unavailable.');
+}
 </script>
 </body></html>
 +Number(result.total||0).toFixed(2);
