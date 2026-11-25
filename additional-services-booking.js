@@ -42,13 +42,13 @@ const lawnServices = [
   ['decorative-rock', 'Decorative Rock Installation',
     'Installation and spreading of decorative landscape rock.'],
   ['yard-cleanup', 'Yard Cleanup',
-    'General cleanup of leaves, debris, and manageable yard waste.'],
+    'A one-time, general tidy-up of the yard: gather and clear ordinary loose leaves, small branches, sticks, and manageable surface debris from the agreed areas. Best for a straightforward cleanup between seasons. Does not include a full spring/fall reset, recurring upkeep, major overgrowth, or hauling/disposal unless specifically included in your quote.'],
   ['trimming-edging', 'Trimming & Edging',
-    'Basic trimming and edging around accessible lawn areas.'],
+    'Basic trimming and edging around accessible lawn and landscape borders.'],
   ['seasonal-yard-cleanup', 'Seasonal Yard Cleanup',
-    'Larger seasonal cleanup of suitable lawn and property areas.'],
+    'A more thorough spring or fall service to prepare the property for the coming season. May include clearing accumulated seasonal leaves and debris, removing spent annual plants, tidying landscape beds, and collecting fallen branches in the agreed areas. This is a seasonal reset—not routine recurring maintenance.'],
   ['property-maintenance', 'Property Maintenance',
-    'Routine lawn and property-care service for suitable areas.']
+    'Routine or recurring upkeep visits to keep selected areas neat between major cleanups. May include light weeding, touch-up trimming, edging, and general appearance checks as agreed for each visit. Does not include a full seasonal cleanup, major debris cleanout, or new mulch/rock installation unless separately quoted.']
 ];
 
 const lawnNames = Object.fromEntries(
@@ -122,7 +122,7 @@ function addLawnCategory() {
   section.innerHTML = `
     <div class="category-head">
       <h2>Lawn &amp; Property Care</h2>
-      <p>Mobile lawn and property care services available for online booking.</p>
+      <p>Choose the type of care you need. Yard Cleanup is a one-time general tidy-up; Seasonal Yard Cleanup is a more complete spring/fall reset; Property Maintenance is routine upkeep. Each service has a different scope, so you are not paying twice for the same task.</p>
     </div>
     <div class="services">
       ${lawnServices.map(service => `
@@ -414,10 +414,10 @@ function openLawn(service) {
   }
 
   if ($('description')) {
-    $('description').textContent =
-      'Complete the information below for your ' +
-      (lawnNames[service] || 'lawn & property care').toLowerCase() +
-      ' request.';
+    const selectedService = lawnServices.find(item => item[0] === service);
+    $('description').textContent = selectedService
+      ? selectedService[2]
+      : 'Complete the information below for your lawn & property care request.';
   }
 
   $('lawnSizeField')?.classList.toggle('hidden', service !== 'lawn-mowing');
